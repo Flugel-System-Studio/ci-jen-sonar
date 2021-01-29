@@ -1,0 +1,26 @@
+version: "3.7"
+services:
+  jenkins:
+    container_name: ci-jenkins
+    user: 0:0
+    image: jenkinsci/blueocean:latest
+    volumes:
+      - ./jenkins/jenkins-data:/var/jenkins_home
+    restart: always
+    environment:
+      TZ: Asia/Tokyo
+    ports:
+      - "18080:8080"
+      - "50000:50000"
+    entrypoint: ["/bin/tini", "--", "/usr/local/bin/jenkins.sh"]
+    networks:
+      ciNet:
+        ipv4_address: 172.10.0.5
+
+networks:
+  ciNet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.10.0.0/24
